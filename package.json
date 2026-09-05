@@ -1,0 +1,12 @@
+{
+  "name": "propperly",
+  "private": true,
+  "workspaces": [
+    "app",
+    "services",
+    "engine",
+    "data-center",
+    "storage",
+    "mcp"
+  ]
+}
