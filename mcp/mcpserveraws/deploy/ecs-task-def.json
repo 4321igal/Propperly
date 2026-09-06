@@ -1,0 +1,34 @@
+{
+  "family": "propperly-mcp-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/propperlyMcpTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "propperly-mcp",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/propperly-mcp:latest",
+      "portMappings": [{ "containerPort": 3000 }],
+      "environment": [
+        { "name": "MCP_MODE", "value": "http" },
+        { "name": "SERVICES_URL", "value": "https://services.internal.example" }
+      ],
+      "secrets": [
+        {
+          "name": "MCP_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:propperly/mcp-api-key"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/propperly-mcp",
+          "awslogs-region": "REGION",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

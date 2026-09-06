@@ -13,4 +13,14 @@ Services only.
 ## Contract
 
 See [`CONTRACT.md`](CONTRACT.md) for the tool registry shape and the
-Services client interface MCP consumes.
+Services client interface MCP consumes. `src/index.ts` here is just the
+skeleton placeholder.
+
+## Reference implementation
+
+[`mcpserveraws/`](mcpserveraws/README.md) is a real, runnable implementation
+of this contract — MCP SDK server, stdio/HTTP transport, Docker image, and
+AWS deployment options — adapted from
+[`Prompt/McpServerAws.md`](Prompt/McpServerAws.md). It must still obey
+everything above: it calls Services only, never Engine/Data Center/Storage
+directly.

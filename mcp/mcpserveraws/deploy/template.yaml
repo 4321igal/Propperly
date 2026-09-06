@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Propperly MCP — AI-facing adapter. Lambda + HTTP API option. This function
+  calls Services only; it holds no IAM permissions toward Data Center,
+  Storage, or Engine because it must never reach them directly.
+
+Parameters:
+  ServicesUrl:
+    Type: String
+    Description: Base URL of the Services deployment MCP is allowed to call.
+  McpApiKey:
+    Type: String
+    Description: Shared key required in the x-mcp-api-key header. Leave empty to disable.
+    Default: ""
+    NoEcho: true
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        MCP_MODE: http
+        SERVICES_URL: !Ref ServicesUrl
+        MCP_API_KEY: !Ref McpApiKey
+
+Resources:
+  McpFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../
+      Handler: dist/index.handler
+      Runtime: nodejs20.x
+      # No DynamoDBCrudPolicy / S3ReadPolicy here on purpose — MCP does not
+      # touch Data Center or Storage directly, only Services.
+      Events:
+        McpApi:
+          Type: HttpApi
+          Properties:
+            Path: /mcp
+            Method: POST
+
+Outputs:
+  McpServerUrl:
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/mcp"
