@@ -12,5 +12,5 @@ by calling the Services API (REST/GraphQL).
 
 ## Contract
 
-See [`src/contract.ts`](src/contract.ts) for the shape of the Services API
-this app consumes.
+See [`CONTRACT.md`](CONTRACT.md) for the shape of the Services API this app
+consumes.

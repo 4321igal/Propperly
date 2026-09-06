@@ -17,3 +17,9 @@ Services, reachable only via internal RPC.
 
 See [`CONTRACT.md`](CONTRACT.md) for the RPC interface Engine exposes to
 Services.
+
+## Processes
+
+See [`PROCESSES.md`](PROCESSES.md) for Engine's internal sub-processes, each
+with a fixed ID (pilot for the process-registry layer — see the root
+[`REGISTRY.md`](../REGISTRY.md)).

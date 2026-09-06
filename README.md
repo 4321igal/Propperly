@@ -73,3 +73,7 @@ database/storage access, no deployment topology or CI/CD decisions.
 See the bottom of `propperly_initial_project_prompt_en.md` for the originating
 prompt, and the summary at the end of the PR/commit that introduced this
 skeleton for open decisions.
+
+See [`REGISTRY.md`](REGISTRY.md) for the fixed ID assigned to each service
+and sub-process, per the
+[organizational order proposal](propperly_organizational_order_proposal_en.md).
