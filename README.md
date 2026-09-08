@@ -1,15 +1,23 @@
 # Propperly
 
-Skeleton monorepo for the Propperly system, organized around six services with
-strict responsibility boundaries. No business/semantic logic is implemented
-yet — this is structure only.
+Skeleton monorepo for the Propperly system, organized around seven services
+with strict responsibility boundaries. No business/semantic logic is
+implemented yet — this is structure only.
 
 ## Service map
 
 ```
+        ┌─────────────┐
+        │     WEB     │
+        │ (React UI,  │
+        │  no         │
+        │  semantics) │
+        └──────┬──────┘
+               │ REST/GraphQL
+               ▼
         ┌─────────────┐        ┌─────────────┐
         │     APP     │        │     MCP     │
-        │ (UI, no     │        │ (AI-facing  │
+        │ (BFF, no    │        │ (AI-facing  │
         │  semantics) │        │  adapter)   │
         └──────┬──────┘        └──────┬──────┘
                │  REST/GraphQL        │  calls Services only
@@ -39,6 +47,8 @@ yet — this is structure only.
           └─────────────┘       └─────────────┘
 ```
 
+- **WEB → APP**: REST/GraphQL. WEB holds no semantic logic — it's the React
+  UI; APP is its BFF and holds no UI/rendering.
 - **APP → Services**: REST/GraphQL. APP holds no semantic logic.
 - **MCP → Services**: JSON-RPC (stdio / HTTP+SSE) toward AI/Agent on one side,
   calls Services only on the other. MCP never calls Engine or Data Center
@@ -57,7 +67,8 @@ yet — this is structure only.
 
 | Service | Responsibility | Folder |
 |---|---|---|
-| APP | User interface | [`app/`](app/README.md) |
+| WEB | React UI (client) | [`web/`](web/README.md) |
+| APP | API layer for WEB (BFF) | [`app/`](app/README.md) |
 | Services | Use-case orchestration, authorization, policy | [`services/`](services/README.md) |
 | Engine | Semantic core | [`engine/`](engine/README.md) |
 | Data Center | Structured persistence | [`data-center/`](data-center/README.md) |

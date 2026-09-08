@@ -2,6 +2,7 @@
   "name": "propperly",
   "private": true,
   "workspaces": [
+    "web",
     "app",
     "services",
     "engine",

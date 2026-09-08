@@ -12,6 +12,7 @@ here and a matching section in the owning service's `PROCESSES.md`
 
 | ID | Name | Service | Doc | Status | Depends on |
 |---|---|---|---|---|---|
+| `WEB` | Web | web | [web/README.md](web/README.md) | in-progress | `APP` |
 | `APP` | App | app | [app/README.md](app/README.md) | in-progress | `SVC` |
 | `SVC` | Services | services | [services/README.md](services/README.md) | in-progress | `ENG`, `DC` |
 | `ENG` | Engine | engine | [engine/README.md](engine/README.md) | in-progress | `DC` |
