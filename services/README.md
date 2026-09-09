@@ -19,3 +19,8 @@ RPC) and Data Center/Storage. Exposes REST/GraphQL to APP and MCP.
 See [`CONTRACT.md`](CONTRACT.md) for the external interface exposed to APP
 and MCP. The Engine RPC client stub lives at
 [`src/engine-rpc-client.ts`](src/engine-rpc-client.ts).
+
+## Processes
+
+See [`PROCESSES.md`](PROCESSES.md) for Services' internal sub-processes,
+each with a fixed ID (see the root [`REGISTRY.md`](../REGISTRY.md)).
