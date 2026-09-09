@@ -19,6 +19,7 @@ here and a matching section in the owning service's `PROCESSES.md`
 | `DC` | Data Center | data-center | [data-center/README.md](data-center/README.md) | in-progress | `STO` |
 | `STO` | Storage | storage | [storage/README.md](storage/README.md) | in-progress | — |
 | `MCP` | MCP | mcp | [mcp/README.md](mcp/README.md) | in-progress | `SVC` |
+| `SVC-001` | Discovery | services | [services/PROCESSES.md#svc-001--discovery](services/PROCESSES.md#svc-001--discovery) | planned | — |
 | `ENG-001` | Reconstruction | engine | [engine/PROCESSES.md#eng-001--reconstruction](engine/PROCESSES.md#eng-001--reconstruction) | planned | `DC` |
 | `ENG-002` | Understanding | engine | [engine/PROCESSES.md#eng-002--understanding](engine/PROCESSES.md#eng-002--understanding) | planned | `ENG-001` |
 | `ENG-003` | Conflicts | engine | [engine/PROCESSES.md#eng-003--conflicts](engine/PROCESSES.md#eng-003--conflicts) | planned | TBD |
@@ -31,7 +32,8 @@ here and a matching section in the owning service's `PROCESSES.md`
 entry point) exists but no business/semantic logic has been implemented yet
 — see the root [README.md](README.md#status).
 
-Only Engine has sub-process rows so far: it's the pilot service for this
-layer (proposal section 9, stage 2). The other five services get their
-`PROCESSES.md` and registry rows once their actual sub-processes are
-identified (proposal section 11, decision 4).
+Engine was the pilot service for this layer (proposal section 9, stage 2);
+Services now has its first sub-process row (`SVC-001`, SL-02 Source
+Discovery) once that module's scope was identified. The remaining four
+services get their `PROCESSES.md` and registry rows once their actual
+sub-processes are identified (proposal section 11, decision 4).
