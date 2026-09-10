@@ -9,6 +9,7 @@
     "data-center",
     "storage",
     "mcp",
-    "mcp/mcpserveraws"
+    "mcp/mcpserveraws",
+    "companion"
   ]
 }

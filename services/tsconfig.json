@@ -11,6 +11,15 @@
   "include": [
     "src/**/*.ts",
     "discovery/**/*.ts",
+    "drive/**/*.ts",
+    "git/**/*.ts",
+    "auth/**/*.ts",
+    "local/**/*.ts",
+    "sessions/**/*.ts",
+    "audit/**/*.ts",
+    "db/**/*.ts",
+    "security/**/*.ts",
+    "tenant/**/*.ts",
     "../app/src/**/*.ts",
     "../storage/src/**/*.ts",
     "../data-center/src/**/*.ts"

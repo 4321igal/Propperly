@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id          String        @id @default(cuid())
+  name        String
+  domain      String?       @unique
+  createdAt   DateTime      @default(now())
+  users       UserToken[]
+  gitUsers    GitHubToken[]
+}
+
+model UserToken {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  email        String
+  accessToken  String
+  refreshToken String?
+  expiresAt    DateTime?
+  tenantId     String?
+  tenant       Tenant?   @relation(fields: [tenantId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model GitHubToken {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  githubLogin String
+  accessToken String
+  scopes      String
+  tenantId    String?
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  userId        String
+  sessionPath   String
+  tool          String   // 'claude-code' | 'cursor' | 'vscode' | 'other'
+  title         String?
+  snippet       String   // first 500 chars for display
+  contentStored String   // first 10KB for search
+  contentHash   String
+  sizeBytes     Int
+  sessionDate   DateTime
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, sessionPath])
+  @@index([userId])
+  @@index([userId, tool])
+  @@index([sessionDate])
+}
+
+model LocalFile {
+  id           String   @id @default(cuid())
+  userId       String
+  absolutePath String
+  relativePath String
+  name         String
+  sizeBytes    BigInt
+  mimeType     String
+  contentHash  String
+  storageKey   String
+
+  indexedAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, absolutePath])
+  @@index([userId])
+  @@index([userId, name])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  userId        String
+  toolName      String
+  inputArgs     Json
+  resultSummary String?
+  isError       Boolean  @default(false)
+  durationMs    Int?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
