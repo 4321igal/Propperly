@@ -11,8 +11,13 @@ export PROPPERLY_CWD
 echo "Starting Propperly Discovery Service"
 echo "  Port      : $PORT"
 echo "  Workspace : $PROPPERLY_CWD"
+echo "  UI        : http://localhost:$PORT"
 echo ""
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
+
+# Open browser after server starts
+(sleep 2 && xdg-open "http://localhost:$PORT" 2>/dev/null || open "http://localhost:$PORT" 2>/dev/null) &
+
 npx tsx services/src/index.ts

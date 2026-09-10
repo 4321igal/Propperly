@@ -12,14 +12,14 @@ here and a matching section in the owning service's `PROCESSES.md`
 
 | ID | Name | Service | Doc | Status | Depends on |
 |---|---|---|---|---|---|
-| `WEB` | Web | web | [web/README.md](web/README.md) | in-progress | `APP` |
-| `APP` | App | app | [app/README.md](app/README.md) | in-progress | `SVC` |
-| `SVC` | Services | services | [services/README.md](services/README.md) | in-progress | `ENG`, `DC` |
-| `ENG` | Engine | engine | [engine/README.md](engine/README.md) | in-progress | `DC` |
-| `DC` | Data Center | data-center | [data-center/README.md](data-center/README.md) | in-progress | `STO` |
-| `STO` | Storage | storage | [storage/README.md](storage/README.md) | in-progress | — |
-| `MCP` | MCP | mcp | [mcp/README.md](mcp/README.md) | in-progress | `SVC` |
-| `SVC-001` | Discovery | services | [services/PROCESSES.md#svc-001--discovery](services/PROCESSES.md#svc-001--discovery) | planned | — |
+| `WEB` | Web | web | [web/README.md](web/README.md) | skeleton | `APP` |
+| `APP` | App | app | [app/README.md](app/README.md) | skeleton | `SVC` |
+| `SVC` | Services | services | [services/README.md](services/README.md) | implemented | `ENG`, `DC` |
+| `ENG` | Engine | engine | [engine/README.md](engine/README.md) | skeleton | `DC` |
+| `DC` | Data Center | data-center | [data-center/README.md](data-center/README.md) | partial | `STO` |
+| `STO` | Storage | storage | [storage/README.md](storage/README.md) | partial | — |
+| `MCP` | MCP | mcp | [mcp/README.md](mcp/README.md) | implemented | `SVC` |
+| `SVC-001` | Discovery | services | [services/PROCESSES.md#svc-001--discovery](services/PROCESSES.md#svc-001--discovery) | implemented | — |
 | `ENG-001` | Reconstruction | engine | [engine/PROCESSES.md#eng-001--reconstruction](engine/PROCESSES.md#eng-001--reconstruction) | planned | `DC` |
 | `ENG-002` | Understanding | engine | [engine/PROCESSES.md#eng-002--understanding](engine/PROCESSES.md#eng-002--understanding) | planned | `ENG-001` |
 | `ENG-003` | Conflicts | engine | [engine/PROCESSES.md#eng-003--conflicts](engine/PROCESSES.md#eng-003--conflicts) | planned | TBD |
@@ -28,9 +28,9 @@ here and a matching section in the owning service's `PROCESSES.md`
 | `ENG-006` | Dependencies | engine | [engine/PROCESSES.md#eng-006--dependencies](engine/PROCESSES.md#eng-006--dependencies) | planned | TBD |
 | `ENG-007` | Obligations | engine | [engine/PROCESSES.md#eng-007--obligations](engine/PROCESSES.md#eng-007--obligations) | planned | TBD |
 
-`in-progress` here means the service's skeleton (README/CONTRACT/placeholder
-entry point) exists but no business/semantic logic has been implemented yet
-— see the root [README.md](README.md#status).
+Status values: **implemented** = production-ready logic exists; **partial** = real logic for specific sub-processes only; **skeleton** = README/CONTRACT/placeholder entry point only, no business logic.
+
+See [README.md](README.md#status) for the full breakdown.
 
 Engine was the pilot service for this layer (proposal section 9, stage 2);
 Services now has its first sub-process row (`SVC-001`, SL-02 Source

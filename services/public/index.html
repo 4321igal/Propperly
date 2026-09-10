@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Propperly — Source Discovery</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.1rem; font-weight: 600; color: #94a3b8; margin-bottom: 1rem; }
+    h3 { font-size: 0.95rem; font-weight: 600; color: #cbd5e1; margin-bottom: 0.75rem; }
+
+    .subtitle { color: #64748b; font-size: 0.85rem; margin-bottom: 2rem; }
+
+    .card {
+      background: #1e2230;
+      border: 1px solid #2d3748;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card.disabled { opacity: 0.4; pointer-events: none; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-green  { background: #14532d; color: #86efac; }
+    .badge-yellow { background: #713f12; color: #fde68a; }
+    .badge-red    { background: #7f1d1d; color: #fca5a5; }
+    .badge-gray   { background: #1e2938; color: #94a3b8; }
+    .badge-blue   { background: #1e3a5f; color: #93c5fd; }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 7px;
+      border: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-primary  { background: #3b82f6; color: #fff; }
+    .btn-success  { background: #16a34a; color: #fff; }
+    .btn-danger   { background: #dc2626; color: #fff; }
+    .btn-ghost    { background: #2d3748; color: #cbd5e1; }
+
+    .row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .spacer { flex: 1; }
+
+    .meta { font-size: 0.78rem; color: #475569; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; color: #64748b; font-weight: 500; padding: 0.4rem 0.6rem; border-bottom: 1px solid #2d3748; }
+    td { padding: 0.55rem 0.6rem; border-bottom: 1px solid #1a2035; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #252c3d; }
+
+    .path { font-family: monospace; font-size: 0.8rem; color: #a5b4fc; word-break: break-all; }
+
+    .log {
+      background: #0a0d14;
+      border: 1px solid #1e2938;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #64748b;
+      max-height: 120px;
+      overflow-y: auto;
+      margin-top: 0.75rem;
+    }
+    .log .ok   { color: #86efac; }
+    .log .warn { color: #fde68a; }
+    .log .err  { color: #fca5a5; }
+
+    .step-indicator {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .step {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: #2d3748;
+      transition: background 0.3s;
+    }
+    .step.done    { background: #3b82f6; }
+    .step.current { background: #7c3aed; }
+
+    #section-candidates { display: none; }
+    #section-approve    { display: none; }
+
+    .conflict-box {
+      background: #2d1f0a;
+      border: 1px solid #92400e;
+      border-radius: 7px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    input[type=text] {
+      background: #0a0d14;
+      border: 1px solid #2d3748;
+      border-radius: 6px;
+      color: #e2e8f0;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.875rem;
+      width: 100%;
+      outline: none;
+    }
+    input[type=text]:focus { border-color: #3b82f6; }
+
+    .form-group { margin-bottom: 0.75rem; }
+    label { display: block; font-size: 0.78rem; color: #64748b; margin-bottom: 0.3rem; }
+  </style>
+</head>
+<body>
+
+<h1>Propperly</h1>
+<p class="subtitle">Source Discovery — SL-02</p>
+
+<div class="step-indicator">
+  <div class="step current" id="step-0"></div>
+  <div class="step" id="step-1"></div>
+  <div class="step" id="step-2"></div>
+</div>
+
+<!-- SECTION 1: Workspace -->
+<div class="card" id="section-workspace">
+  <div class="row" style="margin-bottom:1rem">
+    <h2 style="margin:0">Workspace</h2>
+    <div class="spacer"></div>
+    <button class="btn-ghost" onclick="loadWorkspace()">↻ Refresh</button>
+  </div>
+
+  <div id="ws-status">Loading…</div>
+
+  <div style="margin-top:1.25rem">
+    <div class="form-group">
+      <label>Add candidate path (optional)</label>
+      <input type="text" id="add-path" placeholder="/path/to/repo" />
+    </div>
+    <div class="row">
+      <button class="btn-primary" id="btn-start-run" onclick="startRun()">▶ Start Discovery Run</button>
+    </div>
+  </div>
+  <div class="log" id="log-workspace"></div>
+</div>
+
+<!-- SECTION 2: Candidates -->
+<div class="card disabled" id="section-candidates">
+  <div class="row" style="margin-bottom:1rem">
+    <h2 style="margin:0">Candidates</h2>
+    <div class="spacer"></div>
+    <span class="badge badge-gray" id="run-id-badge">no run</span>
+    <button class="btn-ghost" onclick="loadRun()">↻ Refresh</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Path / Locator</th>
+        <th>Kind</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="candidates-tbody">
+      <tr><td colspan="4" style="color:#475569;text-align:center;padding:1rem">No candidates yet.</td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:1.25rem">
+    <div class="form-group">
+      <label>Add candidate manually</label>
+      <div class="row">
+        <input type="text" id="manual-path" placeholder="/path/to/source" style="flex:1" />
+        <select id="manual-kind" style="background:#0a0d14;border:1px solid #2d3748;border-radius:6px;color:#e2e8f0;padding:0.45rem 0.75rem;font-size:0.875rem">
+          <option value="GIT_REPO">GIT_REPO</option>
+          <option value="FOLDER">FOLDER</option>
+          <option value="UNKNOWN">UNKNOWN</option>
+        </select>
+        <button class="btn-ghost" onclick="addCandidate()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="conflicts-section" style="display:none;margin-top:1rem">
+    <h3>Identity Conflicts</h3>
+    <div id="conflicts-list"></div>
+  </div>
+
+  <div class="log" id="log-candidates"></div>
+
+  <div style="margin-top:1.25rem">
+    <button class="btn-primary" onclick="loadProposedInventory()">→ Review Proposed Inventory</button>
+  </div>
+</div>
+
+<!-- SECTION 3: Approve -->
+<div class="card disabled" id="section-approve">
+  <div class="row" style="margin-bottom:1rem">
+    <h2 style="margin:0">Proposed Inventory</h2>
+    <div class="spacer"></div>
+    <button class="btn-ghost" onclick="loadProposedInventory()">↻ Refresh</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ref</th>
+        <th>Locator</th>
+        <th>Kind</th>
+      </tr>
+    </thead>
+    <tbody id="inventory-tbody">
+      <tr><td colspan="3" style="color:#475569;text-align:center;padding:1rem">Load candidates first.</td></tr>
+    </tbody>
+  </table>
+
+  <div id="revision-info" style="margin-top:0.75rem" class="meta"></div>
+
+  <div class="log" id="log-approve"></div>
+
+  <div style="margin-top:1.25rem">
+    <button class="btn-success" onclick="confirmInventory()">✓ Confirm Source Inventory</button>
+  </div>
+</div>
+
+<script>
+const API = '';  // same origin
+let currentRunId = null;
+let proposedInventoryView = null;
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+function appendLog(logId, msg, level = 'ok') {
+  const el = document.getElementById(logId);
+  const line = document.createElement('div');
+  line.className = level;
+  line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+async function apiFetch(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  const text = await r.text();
+  let json;
+  try { json = JSON.parse(text); } catch { json = text; }
+  if (!r.ok) throw new Error(`${r.status}: ${JSON.stringify(json)}`);
+  return json;
+}
+
+function setStep(n) {
+  for (let i = 0; i < 3; i++) {
+    const el = document.getElementById(`step-${i}`);
+    el.className = 'step' + (i < n ? ' done' : i === n ? ' current' : '');
+  }
+}
+
+function enableSection(id) {
+  document.getElementById(id).classList.remove('disabled');
+}
+
+// ── workspace ─────────────────────────────────────────────────────────────────
+
+async function loadWorkspace() {
+  try {
+    const data = await apiFetch('GET', '/api/discovery/workspace');
+    const statusEl = document.getElementById('ws-status');
+    statusEl.innerHTML = `
+      <div class="row">
+        <span class="meta">Workspace ID:</span>
+        <span class="path">${data.workspace_id}</span>
+      </div>
+      <div class="row" style="margin-top:0.5rem">
+        <span class="meta">State:</span>
+        <span class="badge ${data.state === 'NEW' ? 'badge-yellow' : 'badge-green'}">${data.state}</span>
+        <span class="meta" style="margin-left:1rem">Approved inventory:</span>
+        <span class="badge ${data.has_approved_inventory ? 'badge-green' : 'badge-gray'}">${data.has_approved_inventory ? 'YES' : 'none'}</span>
+      </div>
+    `;
+    appendLog('log-workspace', `Workspace loaded: ${data.state}`);
+  } catch (err) {
+    appendLog('log-workspace', `Error: ${err.message}`, 'err');
+  }
+}
+
+async function startRun() {
+  try {
+    document.getElementById('btn-start-run').disabled = true;
+    const extraPath = document.getElementById('add-path').value.trim();
+    const policy = extraPath ? { seed_paths: [extraPath] } : undefined;
+    const data = await apiFetch('POST', '/api/discovery/runs', { policy });
+    currentRunId = data.run_id;
+    appendLog('log-workspace', `Run started: ${currentRunId}`);
+    document.getElementById('run-id-badge').textContent = currentRunId.slice(0, 8) + '…';
+    enableSection('section-candidates');
+    document.getElementById('section-candidates').style.display = '';
+    setStep(1);
+    await loadRun();
+  } catch (err) {
+    appendLog('log-workspace', `Error: ${err.message}`, 'err');
+    document.getElementById('btn-start-run').disabled = false;
+  }
+}
+
+// ── candidates ────────────────────────────────────────────────────────────────
+
+async function loadRun() {
+  if (!currentRunId) return;
+  try {
+    const data = await apiFetch('GET', `/api/discovery/runs/${currentRunId}`);
+    renderCandidates(data.candidates ?? []);
+    renderConflicts(data.identity_conflicts ?? []);
+    appendLog('log-candidates', `Run refreshed — ${(data.candidates ?? []).length} candidate(s)`);
+  } catch (err) {
+    appendLog('log-candidates', `Error: ${err.message}`, 'err');
+  }
+}
+
+function renderCandidates(candidates) {
+  const tbody = document.getElementById('candidates-tbody');
+  if (!candidates.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:#475569;text-align:center;padding:1rem">No candidates yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = candidates.map(c => {
+    const sel = c.selection ?? 'PENDING';
+    const badge = sel === 'INCLUDED' ? 'badge-green' : sel === 'EXCLUDED' ? 'badge-red' : 'badge-gray';
+    return `
+      <tr>
+        <td><span class="path">${c.locator ?? c.ref ?? '—'}</span></td>
+        <td><span class="badge badge-blue">${c.kind ?? '—'}</span></td>
+        <td><span class="badge ${badge}">${sel}</span></td>
+        <td>
+          <div class="row">
+            <button class="btn-success" style="padding:0.3rem 0.7rem;font-size:0.75rem" onclick="select('${c.ref}','INCLUDED')">✓</button>
+            <button class="btn-danger"  style="padding:0.3rem 0.7rem;font-size:0.75rem" onclick="select('${c.ref}','EXCLUDED')">✗</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function renderConflicts(conflicts) {
+  const sec = document.getElementById('conflicts-section');
+  const list = document.getElementById('conflicts-list');
+  if (!conflicts.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  list.innerHTML = conflicts.map((cf, i) => `
+    <div class="conflict-box">
+      <div class="row" style="margin-bottom:0.5rem">
+        <span class="badge badge-yellow">Conflict ${i+1}</span>
+        <span class="meta">refs: ${cf.refs?.join(', ')}</span>
+      </div>
+      <div class="row">
+        <button class="btn-ghost" style="font-size:0.78rem" onclick="resolveIdentity(${JSON.stringify(cf.refs)},'SAME')">Same source</button>
+        <button class="btn-ghost" style="font-size:0.78rem" onclick="resolveIdentity(${JSON.stringify(cf.refs)},'DIFFERENT')">Different sources</button>
+      </div>
+    </div>`).join('');
+}
+
+async function select(ref, selection) {
+  try {
+    await apiFetch('POST', `/api/discovery/runs/${currentRunId}/selections`, { candidate_ref: ref, selection });
+    appendLog('log-candidates', `${ref.slice(0,8)}… → ${selection}`);
+    await loadRun();
+  } catch (err) {
+    appendLog('log-candidates', `Error: ${err.message}`, 'err');
+  }
+}
+
+async function addCandidate() {
+  const path = document.getElementById('manual-path').value.trim();
+  const kind = document.getElementById('manual-kind').value;
+  if (!path) return;
+  try {
+    await apiFetch('POST', `/api/discovery/runs/${currentRunId}/candidates`, { path, kind });
+    document.getElementById('manual-path').value = '';
+    appendLog('log-candidates', `Added: ${path}`);
+    await loadRun();
+  } catch (err) {
+    appendLog('log-candidates', `Error: ${err.message}`, 'err');
+  }
+}
+
+async function resolveIdentity(refs, relation) {
+  try {
+    await apiFetch('POST', `/api/discovery/runs/${currentRunId}/identity`, { refs, relation });
+    appendLog('log-candidates', `Identity resolved: ${refs.join(', ')} → ${relation}`);
+    await loadRun();
+  } catch (err) {
+    appendLog('log-candidates', `Error: ${err.message}`, 'err');
+  }
+}
+
+// ── inventory ─────────────────────────────────────────────────────────────────
+
+async function loadProposedInventory() {
+  if (!currentRunId) return;
+  try {
+    const data = await apiFetch('GET', `/api/discovery/runs/${currentRunId}/proposed-inventory`);
+    proposedInventoryView = data;
+    const sources = data.sources ?? data.proposed_sources ?? [];
+    const tbody = document.getElementById('inventory-tbody');
+    if (!sources.length) {
+      tbody.innerHTML = '<tr><td colspan="3" style="color:#475569;text-align:center;padding:1rem">No included sources.</td></tr>';
+    } else {
+      tbody.innerHTML = sources.map(s => `
+        <tr>
+          <td class="path">${s.ref ?? '—'}</td>
+          <td class="path">${s.locator ?? '—'}</td>
+          <td><span class="badge badge-blue">${s.kind ?? '—'}</span></td>
+        </tr>`).join('');
+    }
+    const rev = data.review_revision ?? data.revision ?? '—';
+    const ver = data.inventory_version ?? data.version ?? 0;
+    document.getElementById('revision-info').textContent = `Inventory version: ${ver}  |  Review revision: ${rev}`;
+    enableSection('section-approve');
+    document.getElementById('section-approve').style.display = '';
+    setStep(2);
+    appendLog('log-approve', `Proposed inventory loaded: ${sources.length} source(s)`);
+  } catch (err) {
+    appendLog('log-approve', `Error: ${err.message}`, 'err');
+  }
+}
+
+async function confirmInventory() {
+  if (!currentRunId || !proposedInventoryView) return;
+  try {
+    const sources = proposedInventoryView.sources ?? proposedInventoryView.proposed_sources ?? [];
+    const refs = sources.map(s => s.ref).filter(Boolean);
+    const body = {
+      run_id: currentRunId,
+      refs,
+      expected_inventory_version: proposedInventoryView.inventory_version ?? proposedInventoryView.version ?? 0,
+      expected_review_revision: proposedInventoryView.review_revision ?? proposedInventoryView.revision ?? '',
+      request_id: crypto.randomUUID(),
+    };
+    const receipt = await apiFetch('POST', '/api/discovery/inventory/confirm', body);
+    appendLog('log-approve', `Inventory confirmed! Receipt: ${JSON.stringify(receipt)}`, 'ok');
+    await loadWorkspace();
+  } catch (err) {
+    appendLog('log-approve', `Error: ${err.message}`, 'err');
+  }
+}
+
+// ── init ──────────────────────────────────────────────────────────────────────
+
+loadWorkspace();
+</script>
+</body>
+</html>

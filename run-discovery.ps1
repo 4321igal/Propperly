@@ -15,7 +15,16 @@ $env:PROPPERLY_CWD = $WorkspaceCwd
 Write-Host "Starting Propperly Discovery Service"
 Write-Host "  Port      : $Port"
 Write-Host "  Workspace : $WorkspaceCwd"
+Write-Host "  UI        : http://localhost:$Port"
 Write-Host ""
 
 Set-Location "$PSScriptRoot"
+
+# Open browser after a short delay so the server has time to start
+Start-Job -ScriptBlock {
+    param($p)
+    Start-Sleep -Seconds 2
+    Start-Process "http://localhost:$p"
+} -ArgumentList $Port | Out-Null
+
 npx tsx services/src/index.ts

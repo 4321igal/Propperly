@@ -77,13 +77,27 @@ implemented yet — this is structure only.
 
 ## Status
 
-This is an initial skeleton: folder structure, per-service README/CONTRACT,
-and a placeholder entry point per service. No business logic, no real
-database/storage access, no deployment topology or CI/CD decisions.
+| Service | State | Notes |
+|---|---|---|
+| **MCP** | ✅ implemented | All tool adapters: Drive, Git, Local, Sessions. HTTP + stdio transports. JWT auth. |
+| **Services** | ✅ implemented | Drive, Git, Local, Sessions, Discovery routes. OAuth (Google + GitHub). Audit logging. Rate limiting. |
+| **Data Center** | ✅ partial | Workspace, Discovery, Candidate, Inventory stores (SL-02). Living-Understanding persistence TBD. |
+| **Storage** | ✅ partial | NDJSON append-store (SL-02). Object storage (companion uploads). |
+| **APP** | 🔲 skeleton | Placeholder entry + domain types. No BFF routes yet. |
+| **WEB** | 🔲 skeleton | React entry point only. No screens. |
+| **Engine** | 🔲 skeleton | Placeholder only. ENG-001–007 all planned. |
 
-See the bottom of `propperly_initial_project_prompt_en.md` for the originating
-prompt, and the summary at the end of the PR/commit that introduced this
-skeleton for open decisions.
+### What's running
+
+- **`SVC-001` Source Discovery** (SL-02) — complete: source-access, filesystem scan, policy projection, identity deduplication, approval/confirmation flow. UI at `services/public/index.html`.
+- **MCP tool adapters** — all 13 tools wired and callable from Claude Desktop / Claude Code.
+- **Companion agent** (`services/companion/`) — watches local folders and AI session dirs, redacts secrets, syncs to Services.
+
+### Open decisions / next up
+
+- Engine sub-processes (ENG-001 Reconstruction through ENG-007 Obligations) are planned but not started.
+- APP BFF routes and WEB screens depend on Engine.
+- Deployment topology and CI/CD not yet decided.
 
 See [`REGISTRY.md`](REGISTRY.md) for the fixed ID assigned to each service
 and sub-process, per the
